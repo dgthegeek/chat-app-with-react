@@ -1,37 +1,67 @@
-import React, { useRef, useState } from 'react';
-import firebase from 'firebase/app';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import ChatMessage from '../message/message'
+import React, { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
+import ChatMessage from '../message/message';
+import { useNavigate } from 'react-router-dom';
 
-const ChatRoom = () => {
+const ChatRoom = ({ user }) => {
+  
   const dummy = useRef();
-  const messagesRef = firebase.firestore().collection('messages');
-  const query = messagesRef.orderBy('createdAt').limit(25);
-
-  const [messages] = useCollectionData(query, { idField: 'id' });
-
+  const [messages, setMessages] = useState([]);
   const [formValue, setFormValue] = useState('');
+
+  const navigate = useNavigate()
+
+  console.log('user', user);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/messages');
+        setMessages(response.data);
+        dummy.current.scrollIntoView({ behavior: 'smooth' });
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    fetchMessages();
+  }, []);
 
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    const { uid, photoURL } = firebase.auth().currentUser;
+    try {
+      await axios.post('http://localhost:3001/sendMessage', {
+        text: formValue,
+        uid: user.uid,
+      });
 
-    await messagesRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL,
-    });
+      setFormValue('');
+      dummy.current.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
 
-    setFormValue('');
-    dummy.current.scrollIntoView({ behavior: 'smooth' });
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:3001/logOut');
+      navigate('/')
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   return (
     <>
+     <header>
+        <h2>Welcome, {user.username}!</h2>
+        <button onClick={handleLogout}>Logout</button>
+      </header>
       <main>
-        {messages && messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+        {messages.map((msg) => (
+          <ChatMessage key={msg.id} message={msg} />
+        ))}
         <span ref={dummy}></span>
       </main>
 

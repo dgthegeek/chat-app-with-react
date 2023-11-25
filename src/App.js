@@ -1,39 +1,36 @@
-import React from 'react';
-import './App.css';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/analytics';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter , Route, Routes } from 'react-router-dom';
+import axios from 'axios';
 import ChatRoom from './components/chat/chat';
-import SignIn from './components/Connexion/Connection'
-import SignOut from './components/deconnexion/deconnection'
-
-
-firebase.initializeApp({
-  apiKey: "AIzaSyBVS1nDVD6KXhofv1PLOufZi8xihlua5FQ",
-  authDomain: "dame-767e4.firebaseapp.com",
-  projectId: "dame-767e4",
-  storageBucket: "dame-767e4.appspot.com",
-  messagingSenderId: "348323459667",
-  appId: "1:348323459667:web:bd02fa1da8b1f24096cca6",
-  measurementId: "G-LXG0Z5Q4XR"
-});
-
-const auth = firebase.auth();
+import SignIn from './components/connexion/connection';
+import Registration from './components/inscription/inscription';
 
 const App = () => {
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/checkAuthStatus');
+        console.log('res',response);
+        setUser(response.data);
+        console.log('userap',user);
+      } catch (error) {
+        console.error('Error checking authentication status:', error);
+        setUser(null);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
 
   return (
-    <div className="App">
-      <header>
-        <h1>Groupe Chat</h1>
-        <SignOut />
-      </header>
-
-      <section>{user ? <ChatRoom /> : <SignIn />}</section>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element= {user ? <ChatRoom user={user} /> : <SignIn setUser={setUser} />}/>
+          <Route path="register" element={<Registration />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
