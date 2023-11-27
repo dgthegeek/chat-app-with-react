@@ -1,16 +1,18 @@
 import React from 'react';
+import firebase from 'firebase/app';
 
-const ChatMessage = ({ message }) => {
-  const { text, uid, createdAt } = message;
+const ChatMessage = (props) => {
+  const { text, uid, photoURL } = props.message;
 
-  // You can format the timestamp as needed
-  const formattedTimestamp = new Date(createdAt).toLocaleTimeString();
+  const messageClass = uid === firebase.auth().currentUser.uid ? 'sent' : 'received';
 
   return (
-    <div className={`message ${uid === 'currentUserId' ? 'sent' : 'received'}`}>
-      <p>{text}</p>
-      <small>{formattedTimestamp}</small>
-    </div>
+    <>
+      <div className={`message ${messageClass}`}>
+        <img src={photoURL} alt="User" />
+        <p>{text}</p>
+      </div>
+    </>
   );
 };
 

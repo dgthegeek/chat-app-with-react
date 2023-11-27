@@ -1,8 +1,13 @@
 import React from 'react';
+import firebase from 'firebase/app';
 
 const SignOut = () => {
   return (
-    <h1>d</h1>
+    firebase.auth().currentUser && (
+      <button className="sign-out" onClick={() => firebase.auth().signOut()}>
+        Deconnecter
+      </button>
+    )
   );
 };
 
