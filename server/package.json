@@ -6,7 +6,8 @@
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
-    "server": "^1.0.38"
+    "server": "^1.0.38",
+    "uuidv4": "^6.2.13"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter , Route, Routes } from 'react-router-dom';
-import axios from 'axios';
 import ChatRoom from './components/chat/chat';
 import SignIn from './components/connexion/connection';
 import Registration from './components/inscription/inscription';
@@ -13,9 +12,10 @@ const App = () => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       const decodedToken = JSON.parse(atob(storedToken.split('.')[1]));
-      setUser({ username: decodedToken.username, token: storedToken });
+      console.log("decod", decodedToken);
+      setUser({ username: decodedToken.username, uid : decodedToken.uid, token: storedToken });
     }
-  }, [user]);
+  }, []);
 
   return (
     <BrowserRouter>

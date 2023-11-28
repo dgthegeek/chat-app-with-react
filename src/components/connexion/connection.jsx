@@ -19,21 +19,14 @@ const SignIn = ({ setUser }) => {
 
     try {
       const response = await axios.post('http://localhost:3001/signIn', formData);
-      const { token, username } = response.data;
-
+      const { token, username, uid } = response.data;
       // Store the token in local storage
       localStorage.setItem('token', token);
-
       // Set the user and token in the state
-      setUser({ username, token });
-
-      // Optionally, you can redirect the user to a different page
-      // For example, you can use the 'useHistory' hook from 'react-router-dom'
-      // to programmatically navigate to another page
-      // history.push('/dashboard');
+      setUser({ username, token, uid });
     } catch (error) {
-      console.error('Error signing in:', error);
-      // Handle authentication error, e.g., display an error message to the user
+      console.error('Bad credentials');
+      alert("Username or password incorect!")
     }
   };
 

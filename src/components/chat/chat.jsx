@@ -4,7 +4,6 @@ import ChatMessage from '../message/message';
 import { useNavigate } from 'react-router-dom';
 
 const ChatRoom = ({ user }) => {
-  console.log(user);
   const dummy = useRef();
   const [messages, setMessages] = useState([]);
   const [formValue, setFormValue] = useState('');
@@ -40,6 +39,7 @@ const ChatRoom = ({ user }) => {
 
   const handleLogout = async () => {
     localStorage.removeItem('token');
+    navigate('/ ')
   };
 
   return (
@@ -58,8 +58,10 @@ const ChatRoom = ({ user }) => {
       <form onSubmit={sendMessage}>
         <input
           value={formValue}
-          onChange={(e) => setFormValue(e.target.value)}
-          placeholder="Ecrire..."
+          onChange={(e) => {
+            console.log("Input value:", e.target.value);
+            setFormValue(e.target.value);
+          }}
         />
         <button type="submit" disabled={!formValue}>
           Envoyer

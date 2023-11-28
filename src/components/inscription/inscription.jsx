@@ -24,7 +24,8 @@ const Registration = () => {
       await axios.post('http://localhost:3001/register', formData);
       navigate('/'); // Redirect to the login page
     } catch (error) {
-      console.error('Error registering user:', error);
+      console.error('Error registering user');
+      alert("username already exist!")
     }
   };
 

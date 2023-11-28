@@ -3,6 +3,7 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -86,7 +87,6 @@ app.post('/signIn', async (req, res) => {
   try {
     // Retrieve user from the database based on the provided username
     const [userData] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
-
     if (!userData || userData.length === 0) {
       // User not found
       return res.status(401).json({ message: 'Invalid credentials' });
